@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#024265</color>
+    <color name="colorPrimaryDark">#024265</color>
+    <color name="colorAccent">#05af9b</color>
+
+    <color name="color_uno">#fb7268</color>
+    <color name="color_blanco">#ededf2</color>
+    <color name="color_dos">#E3E0E0</color>
+
+    <color name="casos">#FFA726</color>
+    <color name="recuperados">#66BB6A</color>
+    <color name="fallecidos">#EF5350</color>
+    <color name="activo">#29B6F6</color>
+
+
+    <color name="rippleEffectColor">#FA8072</color>
+    <color name="btnIniciarSesion">#dc143c</color>
+    <color name="btnRegistrar">#83838c</color>
+
+    <color name="negro_btn">#000</color>
+
+</resources>

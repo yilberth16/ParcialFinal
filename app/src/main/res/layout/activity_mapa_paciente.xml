@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MapaPaciente"
+    >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/rela_perfiles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="10"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:id="@+id/imgCedula"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginLeft="19dp"
+                    android:layout_marginStart="13dp"
+                    android:layout_marginTop="34dp"
+                    />
+
+
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="3"
+    android:orientation="vertical"
+    android:layout_marginLeft="20dp"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nombre: "
+        android:textStyle="italic"/>
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cedula"
+        android:textStyle="italic"/>
+    <TextView
+        android:layout_marginTop="18dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Direccion:"
+        android:textStyle="italic"/>
+
+    <TextView
+        android:layout_marginTop="17dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="fecha de ingreso:"
+        android:textStyle="italic"/>
+</LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="7"
+                    android:layout_marginLeft="20dp"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        android:id="@+id/txtNombrePaciente"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@+id/txt_titulo_list"
+                        android:layout_alignStart="@+id/txt_titulo_list"
+                        android:layout_below="@+id/txt_titulo_list"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="20dp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="5dp"
+                        android:text="----------"
+                        android:textSize="14dp" />
+
+
+
+                    <TextView
+                        android:id="@+id/txtCedulaPaciente"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@+id/txt_titulo_list"
+                        android:layout_alignStart="@+id/txt_titulo_list"
+                        android:layout_below="@+id/txt_titulo_list"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="5dp"
+                        android:text="----------"
+                        android:textStyle="bold"
+
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:id="@+id/txtDireccionPaciente"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@+id/txt_titulo_list"
+                        android:layout_alignStart="@+id/txt_titulo_list"
+                        android:layout_below="@+id/txt_titulo_list"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="5dp"
+                        android:textStyle="bold"
+
+                        android:text="----------"
+                        android:textSize="14dp" />
+
+                    <TextView
+                        android:id="@+id/txtFechaIngreso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@+id/txt_titulo_list"
+                        android:layout_alignStart="@+id/txt_titulo_list"
+                        android:layout_below="@+id/txt_titulo_list"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="5dp"
+                        android:textStyle="bold"
+
+                        android:text="----------"
+                        android:textSize="14dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MapaPaciente" />
+
+</FrameLayout>

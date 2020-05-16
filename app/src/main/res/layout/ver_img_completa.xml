@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/negro_btn"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/img_ver_completa_imagen"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+    <pl.droidsonroids.gif.GifTextView
+        android:id="@+id/gif_cargando_video_imagen"
+        android:background="@drawable/loading"
+        android:visibility="invisible"
+        android:layout_width="60dip"
+        android:layout_height="60dip"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+    <Button
+        android:background="@drawable/cerrar"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:id="@+id/btn_ver_completa_imagen"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/img_no"
+        android:id="@+id/txt_img_no"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#f2f2f2"
+        android:textSize="15dp"
+        android:visibility="invisible" />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffffff"
+        android:id="@+id/rela_conectarse_internet_ver"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <pl.droidsonroids.gif.GifTextView
+            android:id="@+id/gif_cargando_conexion_ver"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/cargando2"
+            android:visibility="invisible"
+            android:layout_marginRight="23dp"
+            android:layout_marginEnd="23dp"
+            android:layout_centerVertical="true"
+            android:layout_alignRight="@+id/btn_conectarse_internet_ver"
+            android:layout_alignEnd="@+id/btn_conectarse_internet_ver" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/no_conexion_internet"
+            android:id="@+id/txt_conectarse_internet_ver"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="32dp"
+            android:textSize="15dp"
+            android:textColor="#ff8d8d8d" />
+
+        <Button
+            android:stateListAnimator="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/conectase"
+            android:id="@+id/btn_conectarse_internet_ver"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="#008d8d8d"
+            android:textColor="#ff4aa7ff"
+            android:layout_marginRight="30dp"
+            android:textSize="13dp" />
+
+    </RelativeLayout>
+</RelativeLayout>
