@@ -47,6 +47,8 @@ public class InicioActivity extends AppCompatActivity
     SimpleArcLoader carga;
     ScrollView scrollView;
     PieChart pieChart;
+    TextView txtNombre;
+    String nombre="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,11 +76,16 @@ public class InicioActivity extends AppCompatActivity
         obtenerDatos();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        String nombre = getIntent().getStringExtra("nombre");
         View headerView = navigationView.getHeaderView(0);
-        TextView txtNombre = (TextView)headerView.findViewById(R.id.txtNombre);
-        txtNombre.setText(nombre);
+
+        getSupportActionBar().setTitle("Estadistica global");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);

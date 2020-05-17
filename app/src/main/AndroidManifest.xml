@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.covid">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +19,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -35,9 +33,9 @@
 
         <activity
             android:name=".MapaPaciente"
-            android:label="@string/title_activity_mapa_paciente"></activity>
+            android:label="@string/title_activity_mapa_paciente"
+            android:theme="@style/noActionBar" />
         <activity android:name=".IngresarPacientes" />
-
         <activity
             android:name=".ver_img_completa"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" />
@@ -47,7 +45,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".DetallePais" />
         <activity android:name=".PaisesAfectados" />
-        <activity android:name=".Inicio" />
         <activity android:name=".Registrar" />
         <activity android:name=".MainActivity">
             <intent-filter>

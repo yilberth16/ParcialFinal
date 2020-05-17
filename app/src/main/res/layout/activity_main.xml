@@ -43,7 +43,7 @@
         android:layout_margin="16dp">
 
         <Button
-            android:id="@+id/colorPrimary"
+            android:id="@+id/btnIniciar_sesion"
             android:textColor="@android:color/white"
             android:background="@drawable/btn_iniciar_sesion_background"
             android:layout_width="wrap_content"

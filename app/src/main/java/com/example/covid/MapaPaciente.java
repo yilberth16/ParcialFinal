@@ -73,6 +73,7 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
     ImageView imgCedula;
     String id="";
     Pacientes pacientes;
+
     private final static int REQUEST_CHECK_SETTINGS_GPS = 0x1;
     private final static int REQUEST_ID_MULTIPLE_PERMISSIONS = 0x2;
 
@@ -98,6 +99,8 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         if (!id.isEmpty()){
             cargarInformacionPaciente(id);
         }
+
+
         mapFragment.getMapAsync(this);
 
         String imagen = getIntent().getStringExtra("url");
@@ -229,6 +232,8 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     }
 
+
+
     private void obtenerHospitalesCerca() {
         StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         stringBuilder.append("location="+String.valueOf(actualLatitud)+","+String.valueOf(actualLongitud));
@@ -240,7 +245,6 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
         Object dataTransfer[] = new Object[2];
         dataTransfer[0] = mMap;
         dataTransfer[1] = url;
-
         GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
         getNearbyPlacesData.execute(dataTransfer);
 

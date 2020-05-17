@@ -6,16 +6,25 @@ public class Pacientes {
     private String fechaDeIngreso;
     private String fotoCedula;
     private String cedula;
-
+    private String miUsuario;
     public Pacientes() {
     }
 
-    public Pacientes(String direccion, String nombreCompleto, String fechaDeIngreso, String fotoCedula, String cedula) {
+    public Pacientes(String direccion, String nombreCompleto, String fechaDeIngreso, String fotoCedula, String cedula, String miUsuario) {
         this.direccion = direccion;
         this.nombreCompleto = nombreCompleto;
         this.fechaDeIngreso = fechaDeIngreso;
         this.fotoCedula = fotoCedula;
         this.cedula = cedula;
+        this.miUsuario = miUsuario;
+    }
+
+    public String getMiUsuario() {
+        return miUsuario;
+    }
+
+    public void setMiUsuario(String miUsuario) {
+        this.miUsuario = miUsuario;
     }
 
     public String getDireccion() {

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.covid.comun.comun;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout rootLayout;
 
      FirebaseAuth auth;
-
+    String nombre="";
     MaterialEditText edtNombre;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
         final MaterialEditText edtContraseña = register_layout.findViewById(R.id.edtPassword);
          edtNombre = register_layout.findViewById(R.id.edtNombre);
+         nombre = edtNombre.getText().toString();
+        final MaterialEditText edtRepiteContraseña = register_layout.findViewById(R.id.edtRepetir);
+
         final MaterialEditText edtTelefono = register_layout.findViewById(R.id.edtPhone);
 
         final MaterialEditText edtEmail = register_layout.findViewById(R.id.edtEmail);
@@ -99,8 +103,13 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                if (edtContraseña.getText().toString().length() < 6) {
-                    Snackbar.make(rootLayout, "Por favor ingrese la direccion de correo electronico", Snackbar.LENGTH_SHORT)
+                if (!edtContraseña.getText().toString().equals(edtRepiteContraseña.getText().toString()))
+                {
+                    Snackbar.make(rootLayout, "Las contraseñas no conciden", Snackbar.LENGTH_SHORT).show();
+                }
+
+                if (edtContraseña.getText().toString().length() < 5) {
+                    Snackbar.make(rootLayout, "Minimo de caractes 6", Snackbar.LENGTH_SHORT)
                             .show();
                     return;
 
@@ -127,23 +136,42 @@ public class MainActivity extends AppCompatActivity {
                                 if(task.isSuccessful()){
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                                     DatabaseReference reference = database.getReference("usuarios").push();
-                                    reference.child("Nombre").setValue(edtNombre.getText().toString());
+                                    reference.child("nombre").setValue(edtNombre.getText().toString());
                                     reference.child("Celular").setValue(edtTelefono.getText().toString());
                                     reference.child("Correo").setValue(edtEmail.getText().toString());
 
 
 
+                                    Toast.makeText(getBaseContext(), getString(R.string.bienvenido) + "a " + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getApplicationContext(), InicioActivity.class);
+                                    intent.putExtra("nombre",edtNombre.getText().toString());
+                                    intent.putExtra("true",true);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
 
-                                            Toast.makeText(getBaseContext(), getString(R.string.bienvenido) + "a" + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(getApplicationContext(), InicioActivity.class);
-                                            intent.putExtra("nombre",edtNombre.getText().toString());
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
+                                    FirebaseUser actualizar = FirebaseAuth.getInstance().getCurrentUser();
+                                    UserProfileChangeRequest actualizar2 = new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(edtNombre.getText().toString()).build();
+
+                                    actualizar.updateProfile(actualizar2).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            //Toast.makeText(MainActivity.this, "Se actualizo correctamente", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
 
 
 
 
                                 }
+
+
+
+
+
+
+
                             }
                         });
             }
@@ -217,14 +245,18 @@ public class MainActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()){
                                     Intent intent = new Intent(getApplicationContext(), InicioActivity.class);
+                                    intent.putExtra("nombre",nombre);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.putExtra("false",false);
                                     startActivity(intent);
 
                                 }else{
                                     //dialogInterface.dismiss();
                                     Snackbar.make(rootLayout, "Datos incorrectos", Snackbar.LENGTH_SHORT)
                                             .show();
+                                    btnIngresar.setEnabled(true);
                                     waitingDialog.dismiss();
+
                                 }
                             }
                         });
