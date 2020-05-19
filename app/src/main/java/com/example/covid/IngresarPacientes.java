@@ -9,44 +9,35 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.covid.Database.GpsDB;
 import com.example.covid.Database.esquemaDB;
 import com.example.covid.Modelo.Pacientes;
-import com.example.covid.Persistencia.PacientesDAO;
 import com.example.covid.ViewHolder.PacienteViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -69,12 +60,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-import info.hoang8f.widget.FButton;
 
 public class IngresarPacientes extends AppCompatActivity {
 
@@ -87,7 +77,13 @@ public class IngresarPacientes extends AppCompatActivity {
     String pickerPath;
     private Uri fotoPerfilUri;
 
-    GpsDB gpsDB;
+    RelativeLayout rootLayout;
+    DatabaseReference reference;
+    private FirebaseAuth mAuth;
+    Thread t;
+    int count;
+    private FusedLocationProviderClient mfusedLocationClient;
+
 
     String direccionGps;
     esquemaDB db;
@@ -107,8 +103,7 @@ public class IngresarPacientes extends AppCompatActivity {
         setContentView(R.layout.activity_ingresar_pacientes);
 
 
-        gpsDB = new GpsDB(this);
-
+        rootLayout = findViewById(R.id.rootLayoutIngresarPaciente);
         fabAdd = (FloatingActionButton) findViewById(R.id.fab_add);
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,11 +112,11 @@ public class IngresarPacientes extends AppCompatActivity {
             }
         });
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-        } else {
-            inicioDeUbicacion();
-        }
+        mAuth = FirebaseAuth.getInstance();
+        count = getIntent().getIntExtra("conteo",0);
+
+        mfusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        reference = FirebaseDatabase.getInstance().getReference("usuarios");
         imagePicker = new ImagePicker(this);
         cameraPicker = new CameraImagePicker(this);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_pacientes);
@@ -169,85 +164,69 @@ public class IngresarPacientes extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         paciente = database.getReference("Pacientes").push();
 
+        t = new Thread(){
+            @Override
+            public void run() {
+                while (!isInterrupted()){
+                    try {
+                        Thread.sleep(20000);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                count++;
+                                subirLatLng();
+                            }
+                        });
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        t.start();
+
+
         CargarTodosLosTrabajadores();
     }
 
-    private  void inicioDeUbicacion() {
-        LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Localizacion Local = new Localizacion();
-        Local.setIngresarPacientes(this);
-        final boolean gpsEnabled = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        if (!gpsEnabled) {
-            //Intent settingsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+    private void subirLatLng(){
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-        }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-            return;
-        }
-        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener) Local);
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) Local);
 
-    }
+        }
 
-    public void setLocation(Location loc) {
-        //Obtener la direccion de la calle a partir de la latitud y la longitud
-        if (loc.getLatitude() != 0.0 && loc.getLongitude() != 0.0) {
-            try {
-                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-                List<Address> list = geocoder.getFromLocation(
-                        loc.getLatitude(), loc.getLongitude(), 1);
-                if (!list.isEmpty()) {
-                    Address DirCalle = list.get(0);
-                    direccionGps = "Mi direccion es:"+ DirCalle.getAddressLine(0) + "\n Longitud: "+loc.getLongitude()+ "\n Latitud: "+loc.getLatitude();
-                   }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+        mfusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null){
+                            try {
+                                Geocoder geocoder = new Geocoder(IngresarPacientes.this, Locale.getDefault());
+                                List<Address> list = geocoder.getFromLocation(
+                                        location.getLatitude(), location.getLongitude(), 1);
+                                if (!list.isEmpty()) {
+                                    Address DirCalle = list.get(0);
+                                    FirebaseUser currentUser = mAuth.getCurrentUser();
 
-    public class Localizacion implements LocationListener {
-        IngresarPacientes ingresarPacientes;
-        public IngresarPacientes getIngresarPacientes() {
-            return ingresarPacientes;
-        }
-        public void setIngresarPacientes(IngresarPacientes ingresarPacientes) {
-            this.ingresarPacientes = ingresarPacientes;
-        }
-        @Override
-        public void onLocationChanged(Location loc) {
-            // Este metodo se ejecuta cada vez que el GPS recibe nuevas coordenadas
-            // debido a la deteccion de un cambio de ubicacion
-            loc.getLatitude();
-            loc.getLongitude();
+                                    Map<String,Object> latLng = new HashMap<>();
+                                    latLng.put(currentUser.getUid()+"/"+"latitud",location.getLatitude());
+                                    latLng.put(currentUser.getUid()+"/"+"longitud",location.getLongitude());
+                                    latLng.put(currentUser.getUid()+"/"+"conteo",count);
+                                    latLng.put(currentUser.getUid()+"/"+"direccion",DirCalle.getAddressLine(0));
+                                    reference.updateChildren(latLng);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            //Log.e("Latitud: ",+location.getLatitude()+"Longitud: "+location.getLongitude());
 
-            this.ingresarPacientes.setLocation(loc);
-        }
-        @Override
-        public void onProviderDisabled(String provider) {
-            // Este metodo se ejecuta cuando el GPS es desactivado
-            Toast.makeText(ingresarPacientes, "GPS Desactivado", Toast.LENGTH_SHORT).show();
-        }
-        @Override
-        public void onProviderEnabled(String provider) {
-            // Este metodo se ejecuta cuando el GPS es activado
-            Toast.makeText(ingresarPacientes, "GPS Activado", Toast.LENGTH_SHORT).show();
-        }
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            switch (status) {
-                case LocationProvider.AVAILABLE:
-                    Log.d("debug", "LocationProvider.AVAILABLE");
-                    break;
-                case LocationProvider.OUT_OF_SERVICE:
-                    Log.d("debug", "LocationProvider.OUT_OF_SERVICE");
-                    break;
-                case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                    Log.d("debug", "LocationProvider.TEMPORARILY_UNAVAILABLE");
-                    break;
-            }
-        }
+                        }
+                    }
+                });
     }
 
     private void CargarTodosLosTrabajadores() {
@@ -280,7 +259,8 @@ public class IngresarPacientes extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
 
-                        EliminarPaciente(adapter.getRef(position).getKey());
+
+                       EliminarPaciente(adapter.getRef(position).getKey());
                     }
                 });
             }
@@ -313,13 +293,13 @@ public class IngresarPacientes extends AppCompatActivity {
     }
 
     private void EliminarPaciente(String key) {
-
-        paciente.child(key)
+DatabaseReference eliminar = FirebaseDatabase.getInstance().getReference("Pacientes");
+        eliminar.child(key)
                 .removeValue()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(IngresarPacientes.this, "Se ha eliminado correctamente", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(rootLayout, "Se ha eliminado correctamente", Snackbar.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -365,7 +345,7 @@ public class IngresarPacientes extends AppCompatActivity {
                         String fechaDeNacimientoTexto = simpleDateFormat.format(date);
                         edtFechaDeIngreso.setText(fechaDeNacimientoTexto);
                     }
-                },calendar.get(Calendar.YEAR)-18,calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH));
+                },calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH));
                 datePickerDialog.show();
             }
         });
@@ -379,18 +359,13 @@ public class IngresarPacientes extends AppCompatActivity {
         crear_trabajador_dialog.setPositiveButton("CREAR", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
-
-
-                    agregarGpsDB(direccionGps);
-
-                paciente.addValueEventListener(new ValueEventListener() {
+                DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Pacientes").push();
+                reference1.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
 
-                            Toast.makeText(IngresarPacientes.this, "Se ha registrado correctamente", Toast.LENGTH_SHORT).show();
-
+                            Toast.makeText(IngresarPacientes.this, "Ya el paciente se encuentra registrado", Toast.LENGTH_SHORT).show();
                         }else{
 
                             Pacientes pacientes = new Pacientes();
@@ -403,7 +378,7 @@ public class IngresarPacientes extends AppCompatActivity {
                             paciente.setValue(pacientes);
                             subirFotoUri();
                             db.agregarDatos(edtCedulaPaciente.getText().toString(),edtNombrePaciente.getText().toString(),edtDireccionPaciente.getText().toString(),edtFechaDeIngreso.getText().toString(),fotoPerfilUri.toString());
-                            Toast.makeText(IngresarPacientes.this, "Se ha registrado correctamente", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(rootLayout, "Se ha registrado correctamente", Snackbar.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                     }
@@ -432,14 +407,7 @@ public class IngresarPacientes extends AppCompatActivity {
     }
 
 
-    public  void agregarGpsDB(String nuevaEntrada){
-        boolean insertarData = gpsDB.addData(nuevaEntrada);
-        if(insertarData == true) {
-            Toast.makeText(this,"Datos insertados correctamente",Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(this,"Algo salio mal",Toast.LENGTH_LONG).show();
-        }
-    }
+
     public void subirFotoUri() {
         referenceFotoDePerfil.putFile(fotoPerfilUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override

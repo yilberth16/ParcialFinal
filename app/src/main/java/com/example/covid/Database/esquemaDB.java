@@ -40,6 +40,9 @@ public class esquemaDB extends SQLiteOpenHelper {
             db.close();
         }
     }
-
+    public Integer eliminarDatos(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("PARCIAL", "IDENTIFICACION = ?", new String[]{id});
+    }
 
 }

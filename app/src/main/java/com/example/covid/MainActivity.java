@@ -34,9 +34,10 @@ public class MainActivity extends AppCompatActivity {
 
     RelativeLayout rootLayout;
 
-     FirebaseAuth auth;
+    private FirebaseAuth auth;
     String nombre="";
     MaterialEditText edtNombre;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,8 +135,10 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
+                                    FirebaseUser currentUser = auth.getCurrentUser();
+
                                     FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                    DatabaseReference reference = database.getReference("usuarios").push();
+                                    DatabaseReference reference = database.getReference("usuarios/"+ currentUser.getUid());
                                     reference.child("nombre").setValue(edtNombre.getText().toString());
                                     reference.child("Celular").setValue(edtTelefono.getText().toString());
                                     reference.child("Correo").setValue(edtEmail.getText().toString());
