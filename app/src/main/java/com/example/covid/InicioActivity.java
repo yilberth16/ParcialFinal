@@ -68,10 +68,12 @@ public class InicioActivity extends AppCompatActivity
     DatabaseReference reference;
 
     private FirebaseAuth mAuth;
+    FirebaseUser currentUser;
     Thread t;
     int count = 0;
     String direccionGps;
-
+    volatile boolean ejecutar = true;
+    String currentUserID;
     private FusedLocationProviderClient mfusedLocationClient;
 
     @Override
@@ -102,6 +104,11 @@ public class InicioActivity extends AppCompatActivity
 
         View headerView = navigationView.getHeaderView(0);
         mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null){
+            currentUserID = currentUser.getUid();
+        }
 
         mfusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         reference = FirebaseDatabase.getInstance().getReference("usuarios");
@@ -119,7 +126,7 @@ public class InicioActivity extends AppCompatActivity
         t = new Thread(){
             @Override
             public void run() {
-                while (!isInterrupted()){
+                while (ejecutar){
                     try {
                         Thread.sleep(20000);
 
@@ -142,6 +149,9 @@ public class InicioActivity extends AppCompatActivity
 
     }
 
+    public void detener() {
+        ejecutar = false;
+    }
     private void subirLatLng(){
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -153,28 +163,30 @@ public class InicioActivity extends AppCompatActivity
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-                        if (location != null){
+
+
+                            if (location != null) {
                                 try {
                                     Geocoder geocoder = new Geocoder(InicioActivity.this, Locale.getDefault());
                                     List<Address> list = geocoder.getFromLocation(
                                             location.getLatitude(), location.getLongitude(), 1);
                                     if (!list.isEmpty()) {
                                         Address DirCalle = list.get(0);
-                                        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-                                        Map<String,Object> latLng = new HashMap<>();
-                                        latLng.put(currentUser.getUid()+"/"+"latitud",location.getLatitude());
-                                        latLng.put(currentUser.getUid()+"/"+"longitud",location.getLongitude());
-                                        latLng.put(currentUser.getUid()+"/"+"conteo",count);
-                                        latLng.put(currentUser.getUid()+"/"+"direccion",DirCalle.getAddressLine(0));
+                                        Map<String, Object> latLng = new HashMap<>();
+                                        latLng.put(currentUserID+ "/" + "latitud", location.getLatitude());
+                                        latLng.put(currentUserID + "/" + "longitud", location.getLongitude());
+                                        latLng.put(currentUserID + "/" + "conteo", count);
+                                        latLng.put(currentUserID + "/" + "direccion", DirCalle.getAddressLine(0));
                                         reference.updateChildren(latLng);
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                            //Log.e("Latitud: ",+location.getLatitude()+"Longitud: "+location.getLongitude());
+                                //Log.e("Latitud: ",+location.getLatitude()+"Longitud: "+location.getLongitude());
 
-                        }
+                            }
+
                     }
                 });
     }
@@ -260,9 +272,10 @@ public class InicioActivity extends AppCompatActivity
             intent.putExtra("conteo",count);
             startActivity(intent);
         } else if (id == R.id.nav_gallery) {
+            detener();
             FirebaseAuth user = FirebaseAuth.getInstance();
-            user.signOut();
-            //t.stop();
+            mAuth.signOut();
+
             Intent intent = new Intent(getApplicationContext(),MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

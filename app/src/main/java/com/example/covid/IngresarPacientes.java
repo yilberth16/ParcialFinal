@@ -260,7 +260,7 @@ public class IngresarPacientes extends AppCompatActivity {
                     public void onClick(View view) {
 
 
-                       EliminarPaciente(adapter.getRef(position).getKey());
+                       //EliminarPaciente();
                     }
                 });
             }
@@ -293,7 +293,7 @@ public class IngresarPacientes extends AppCompatActivity {
     }
 
     private void EliminarPaciente(String key) {
-DatabaseReference eliminar = FirebaseDatabase.getInstance().getReference("Pacientes");
+        DatabaseReference eliminar = FirebaseDatabase.getInstance().getReference("Pacientes");
         eliminar.child(key)
                 .removeValue()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
