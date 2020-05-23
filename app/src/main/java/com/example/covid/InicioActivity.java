@@ -247,7 +247,7 @@ public class InicioActivity extends AppCompatActivity
 
     public void rastrarPais(View view) {
 
-        startActivity(new Intent(getApplicationContext(),PaisesAfectados.class));
+        startActivity(new Intent(getApplicationContext(),MapaCovid.class));
     }
 
     @Override

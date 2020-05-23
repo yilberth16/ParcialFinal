@@ -24,6 +24,7 @@
     <string name="conectase">Conectarse</string>
 
     <string name="no_conexion_internet">No hay conexion a internet</string>
+    <string name="title_activity_mapa_covid">Map</string>
 
 
 </resources>

@@ -80,9 +80,7 @@ public class IngresarPacientes extends AppCompatActivity {
     RelativeLayout rootLayout;
     DatabaseReference reference;
     private FirebaseAuth mAuth;
-    Thread t;
-    int count;
-    private FusedLocationProviderClient mfusedLocationClient;
+
 
 
     String direccionGps;
@@ -113,9 +111,8 @@ public class IngresarPacientes extends AppCompatActivity {
         });
 
         mAuth = FirebaseAuth.getInstance();
-        count = getIntent().getIntExtra("conteo",0);
 
-        mfusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         reference = FirebaseDatabase.getInstance().getReference("usuarios");
         imagePicker = new ImagePicker(this);
         cameraPicker = new CameraImagePicker(this);
@@ -164,70 +161,13 @@ public class IngresarPacientes extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         paciente = database.getReference("Pacientes").push();
 
-        t = new Thread(){
-            @Override
-            public void run() {
-                while (!isInterrupted()){
-                    try {
-                        Thread.sleep(20000);
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                count++;
-                                subirLatLng();
-                            }
-                        });
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-
-        t.start();
 
 
         CargarTodosLosTrabajadores();
     }
 
-    private void subirLatLng(){
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-
-        }
-
-        mfusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null){
-                            try {
-                                Geocoder geocoder = new Geocoder(IngresarPacientes.this, Locale.getDefault());
-                                List<Address> list = geocoder.getFromLocation(
-                                        location.getLatitude(), location.getLongitude(), 1);
-                                if (!list.isEmpty()) {
-                                    Address DirCalle = list.get(0);
-                                    FirebaseUser currentUser = mAuth.getCurrentUser();
-
-                                    Map<String,Object> latLng = new HashMap<>();
-                                    latLng.put(currentUser.getUid()+"/"+"latitud",location.getLatitude());
-                                    latLng.put(currentUser.getUid()+"/"+"longitud",location.getLongitude());
-                                    latLng.put(currentUser.getUid()+"/"+"conteo",count);
-                                    latLng.put(currentUser.getUid()+"/"+"direccion",DirCalle.getAddressLine(0));
-                                    reference.updateChildren(latLng);
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            //Log.e("Latitud: ",+location.getLatitude()+"Longitud: "+location.getLongitude());
-
-                        }
-                    }
-                });
-    }
 
     private void CargarTodosLosTrabajadores() {
 

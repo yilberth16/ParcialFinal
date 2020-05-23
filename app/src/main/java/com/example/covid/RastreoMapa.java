@@ -15,6 +15,7 @@ public class RastreoMapa extends AppCompatActivity {
         setContentView(R.layout.activity_rastreo_mapa);
 
         miWebView = findViewById(R.id.webView);
+        miWebView.loadUrl("file:///android_asset/index2.html");
         miWebView.getSettings().setJavaScriptEnabled(true);
         miWebView.setWebViewClient(new WebViewClient());
     }

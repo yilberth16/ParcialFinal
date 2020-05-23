@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".RastreoMapa"></activity>
+        <activity android:name=".InternetCheck"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -32,6 +32,12 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <uses-library android:name="com.google.android.maps" />
+        <activity
+            android:name=".MapaCovid"
+            android:label="@string/title_activity_mapa_covid"
+            android:theme="@style/noActionBar" />
+        <activity android:name=".RastreoMapa" />
         <activity
             android:name=".MapaPaciente"
             android:label="@string/title_activity_mapa_paciente"

@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                                    Toast.makeText(getBaseContext(), getString(R.string.bienvenido) + "a " + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getBaseContext(), getString(R.string.bienvenido) + " a " + getString(R.string.app_name), Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getApplicationContext(), InicioActivity.class);
                                     intent.putExtra("nombre",edtNombre.getText().toString());
                                     intent.putExtra("true",true);

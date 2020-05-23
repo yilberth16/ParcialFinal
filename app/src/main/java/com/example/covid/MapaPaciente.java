@@ -145,6 +145,8 @@ GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     }
 
+
+
     private void establecerUPGClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this,0,this)

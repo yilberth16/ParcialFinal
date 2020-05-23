@@ -48,6 +48,10 @@ dependencies {
 
     //implementation 'com.google.android.libraries.places:places:2.1.0'
 
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'//this for the retrofit
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.0'// this for the JSON converter
+    implementation 'com.squareup.retrofit2:converter-simplexml:2.5.0'
+    implementation 'com.squareup.okhttp:okhttp:2.7.5'
     implementation 'com.github.Shashank02051997:FancyGifDialog-Android:1.1'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
 
